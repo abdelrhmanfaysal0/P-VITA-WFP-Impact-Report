@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P-VITA Impact Report - Slide Deck</title>
+    
+    <!-- Google Fonts: Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind Config for Brand Colors & Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            green: '#42ba63',
+                            blue: '#37449d',
+                            pink: '#d81e5b',
+                            teal: '#52959b',
+                            light: '#F6F6F6',
+                            dark: '#000000'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Hide main scrollbar */
+            background-color: #F6F6F6;
+            color: #000000;
+        }
+
+        /* Presentation Container with Scroll Snapping */
+        .presentation-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        .presentation-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+
+        /* Individual Slide Wrapper */
+        .slide {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2vh 4vw;
+            position: relative;
+        }
+
+        /* The "Physical" Slide Canvas (16:9 aspect ratio target) */
+        .slide-content {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 1280px;
+            height: 100%;
+            max-height: 720px; /* Forces a landscape presentation format */
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 3rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Slide Header/Footer Layouts */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #F6F6F6;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-footer {
+            position: absolute;
+            bottom: 2rem;
+            left: 4rem;
+            right: 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Chart constraints */
+        .chart-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            min-height: 0; /* Important for flex child sizing */
+        }
+
+        .bg-gradient-brand {
+            background: linear-gradient(135deg, #37449d 0%, #42ba63 100%);
+        }
+        
+        /* Navigation Dots */
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .dot.active {
+            background-color: #42ba63;
+            transform: scale(1.3);
+        }
+
+        /* Entrance Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+        .delay-500 { transition-delay: 500ms; }
+
+        /* Bouncing Animation for Scroll Indicator */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce 2s infinite;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-brand-pink selection:text-white">
+
+    <!-- Navigation Dots -->
+    <div class="nav-dots">
+        <a href="#slide-1" class="dot active" id="dot-1"></a>
+        <a href="#slide-2" class="dot" id="dot-2"></a>
+        <a href="#slide-3" class="dot" id="dot-3"></a>
+        <a href="#slide-4" class="dot" id="dot-4"></a>
+        <a href="#slide-5" class="dot" id="dot-5"></a>
+        <a href="#slide-6" class="dot" id="dot-6"></a>
+        <a href="#slide-7" class="dot" id="dot-7"></a>
+    </div>
+
+    <div class="presentation-container" id="scroller">
+
+        <!-- Slide 1: Cover -->
+        <div class="slide" id="slide-1">
+            <div class="slide-content bg-gradient-brand text-white !border-0 text-center flex items-center justify-center p-0">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==')] opacity-50"></div>
+                
+                <div class="relative z-10 flex flex-col items-center justify-center h-full w-full">
+                    <img src="D:\Work\P-Vita\(1) P-Vita\(2) Design\(1) Branding\(0) Original Logo\SVG\P-VITA Logo (White).svg" alt="P-VITA Logo" class="reveal h-20 md:h-28 w-auto mb-6 drop-shadow-2xl">
+                    <span class="reveal delay-100 uppercase tracking-widest text-xs font-bold mb-4 bg-white/20 px-4 py-1 rounded-full">Sprint 1 Impact Report</span>
+                    <h1 class="reveal delay-200 text-5xl lg:text-7xl font-black mb-6 leading-tight max-w-4xl drop-shadow-lg">
+                        Transforming Agriculture <br> in Egypt.
+                    </h1>
+                    <p class="reveal delay-300 text-lg lg:text-xl font-medium max-w-2xl opacity-90 mb-12">
+                        Empowering smallholder farmers with regenerative, algae-based solutions for better soil, higher yields, and improved livelihoods.
+                    </p>
+                    
+                    <div class="reveal delay-400 grid grid-cols-4 gap-4 w-full max-w-4xl px-8">
+                        <div class="bg-white/10 p-4 lg:p-6 rounded-2xl backdrop-blur-md border border-white/20 hover:-translate-y-2 hover:bg-white/20 hover:shadow-[0_10px_30px_rgba(66,186,99,0.3)] transition-all duration-300 cursor-default">
+                            <h3 class="text-3xl lg:text-4xl font-black text-white mb-1">6,500+</h3>
+                            <p class="text-xs lg:text-sm font-medium text-brand-light">Farmers Reached</p>
+                        </div>
+                        <div class="bg-white/10 p-4 lg:p-6 rounded-2xl backdrop-blur-md border border-white/20 hover:-translate-y-2 hover:bg-white/20 hover:shadow-[0_10px_30px_rgba(66,186,99,0.3)] transition-all duration-300 cursor-default">
+                            <h3 class="text-3xl lg:text-4xl font-black text-white mb-1">12</h3>
+                            <p class="text-xs lg:text-sm font-medium text-brand-light">CDA Partnerships</p>
+                        </div>
+                        <div class="bg-white/10 p-4 lg:p-6 rounded-2xl backdrop-blur-md border border-white/20 hover:-translate-y-2 hover:bg-white/20 hover:shadow-[0_10px_30px_rgba(66,186,99,0.3)] transition-all duration-300 cursor-default">
+                            <h3 class="text-3xl lg:text-4xl font-black text-white mb-1">+25%</h3>
+                            <p class="text-xs lg:text-sm font-medium text-brand-light">Net Income</p>
+                        </div>
+                        <div class="bg-white/10 p-4 lg:p-6 rounded-2xl backdrop-blur-md border border-white/20 hover:-translate-y-2 hover:bg-white/20 hover:shadow-[0_10px_30px_rgba(66,186,99,0.3)] transition-all duration-300 cursor-default">
+                            <h3 class="text-3xl lg:text-4xl font-black text-white mb-1">5,000</h3>
+                            <p class="text-xs lg:text-sm font-medium text-brand-light">Repeat Requests</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll Down Indicator -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce-slow text-white/70">
+                    <span class="text-xs font-bold tracking-widest uppercase mb-2">Scroll</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Demographics -->
+        <div class="slide" id="slide-2">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">01. Demography</span>
+                </div>
+
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0 pb-8">
+                    <div class="flex flex-col justify-center reveal delay-100">
+                        <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-4">Reaching Underserved Communities</h3>
+                        <p class="text-base text-gray-600 mb-6">Initial engagement included 20 farmers (14 active participants), and has rapidly scaled to reach over 6,500 smallholder farmers. Our commitment includes strict safeguards against child labor and a strategic initiative to strengthen women’s economic participation.</p>
+                        
+                        <!-- Interactive Tabs -->
+                        <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl w-fit">
+                            <button id="tab-lower" class="px-4 py-2 bg-white shadow-sm text-brand-dark rounded-lg font-bold transition-all duration-300">Lower Egypt</button>
+                            <button id="tab-upper" class="px-4 py-2 text-gray-500 hover:text-brand-dark rounded-lg font-bold transition-all duration-300">Upper Egypt</button>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div id="region-card" class="bg-brand-light p-4 rounded-xl border-l-4 border-brand-green transition-all duration-500">
+                                <h4 id="region-title" class="font-bold text-brand-dark">Sharkia Governorate</h4>
+                                <p id="region-desc" class="text-sm text-gray-600">(Shabramant, Kafr Abrash, Ghaffaryah, etc.)</p>
+                            </div>
+                            <div class="bg-gradient-brand p-4 rounded-xl text-white">
+                                <h4 class="font-bold text-sm">Ethical Labor Standards</h4>
+                                <p class="text-xs opacity-90">Zero child labor & transitioning away from unpaid family labor.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col items-center justify-between bg-gray-50 rounded-2xl p-6 border border-gray-100 reveal delay-200 h-full min-h-0">
+                        <h4 id="chart-title" class="text-lg font-bold text-brand-dark mb-2 transition-all duration-300">Gender Composition (Lower Egypt)</h4>
+                        <div class="chart-container flex-1 min-h-0 w-full relative" style="max-height: 250px;">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                        <div id="region-strategy" class="mt-4 text-xs text-gray-500 text-center px-4 transition-all duration-500">
+                            <strong>Strategy:</strong> Lower Egypt sees ~2% female participation. We are actively creating pathways for women's entry under fair, paid conditions.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-300">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Economy -->
+        <div class="slide" id="slide-3">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">02. Income Inclusivity</span>
+                </div>
+
+                <div class="mb-4 reveal delay-100">
+                    <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-2">Relieving Financial Pressure</h3>
+                    <p class="text-base text-gray-600 max-w-4xl">Transitioning to P-Vita reduces fertilizer expenditures by 25–50%, directly contributing to economic resilience and up to a 2.6x increase in overall net income.</p>
+                </div>
+
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0 pb-8 reveal delay-200">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex flex-col hover:shadow-md transition-shadow duration-300">
+                        <h4 class="text-center font-bold text-brand-dark mb-4">Fertilizer Cost per Season (EGP/Feddan)</h4>
+                        <div class="chart-container flex-1">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex flex-col hover:shadow-md transition-shadow duration-300">
+                        <h4 class="text-center font-bold text-brand-dark mb-4">Net Annual Income Increase (EGP)</h4>
+                        <div class="chart-container flex-1">
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-300">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 3</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Access & Adoption -->
+        <div class="slide" id="slide-4">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">03. First Access</span>
+                </div>
+
+                <div class="mb-4 reveal delay-100">
+                    <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-2">Shifting Market Paradigms</h3>
+                    <p class="text-base text-gray-600 max-w-4xl">For 90% of farmers, P-Vita represents their first practical access to natural, regenerative inputs. After initial trials, willingness to adapt has been overwhelming.</p>
+                </div>
+
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 min-h-0 pb-8 reveal delay-200">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex flex-col md:col-span-1 hover:shadow-md transition-shadow duration-300">
+                        <h4 class="text-center font-bold text-brand-dark mb-4 text-sm">Initial Awareness of Algae Fertilizer</h4>
+                        <div class="chart-container flex-1">
+                            <canvas id="awarenessChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex flex-col md:col-span-2 hover:shadow-md transition-shadow duration-300">
+                        <h4 class="text-center font-bold text-brand-dark mb-4">Current Input Usage vs. Willingness to Adopt P-Vita</h4>
+                        <div class="chart-container flex-1">
+                            <canvas id="adoptionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-300">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Soil Health -->
+        <div class="slide" id="slide-5">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">04. Soil Transformation</span>
+                </div>
+
+                <div class="flex flex-col h-full min-h-0 pb-8">
+                    <div class="mb-4 flex-shrink-0 reveal delay-100">
+                        <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-2">Healing the Earth</h3>
+                        <p class="text-base text-gray-600 max-w-4xl">P-Vita restores nutrient balance and dramatically flushes out toxic salt build-up caused by prolonged chemical fertilizer use.</p>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4 mb-6 flex-shrink-0 reveal delay-200">
+                        <div class="p-4 bg-brand-light rounded-xl border-t-4 border-brand-blue shadow-sm hover:-translate-y-2 hover:shadow-md transition-all duration-300 cursor-default">
+                            <h4 class="font-black text-xl text-brand-dark">+34 N</h4>
+                            <p class="text-xs text-gray-600 mt-1">Nitrogen builds thicker stalks.</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl border-t-4 border-brand-green shadow-sm hover:-translate-y-2 hover:shadow-md transition-all duration-300 cursor-default">
+                            <h4 class="font-black text-xl text-brand-dark">+42 P</h4>
+                            <p class="text-xs text-gray-600 mt-1">Phosphorus strengthens roots.</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl border-t-4 border-brand-teal shadow-sm hover:-translate-y-2 hover:shadow-md transition-all duration-300 cursor-default">
+                            <h4 class="font-black text-xl text-brand-dark">+87 K</h4>
+                            <p class="text-xs text-gray-600 mt-1">Potassium cuts water needs.</p>
+                        </div>
+                        <div class="p-4 bg-brand-light rounded-xl border-t-4 border-brand-pink shadow-sm hover:-translate-y-2 hover:shadow-md transition-all duration-300 cursor-default">
+                            <h4 class="font-black text-xl text-brand-dark">-534 EC</h4>
+                            <p class="text-xs text-gray-600 mt-1">Massive drop in toxic salinity.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 min-h-0 bg-gray-50 rounded-2xl border border-gray-100 p-4 reveal delay-300 hover:shadow-md transition-shadow duration-300">
+                        <div class="chart-container">
+                            <canvas id="soilChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-400">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 5</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Crop Yield -->
+        <div class="slide" id="slide-6">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">05. Crop Yield Impact</span>
+                </div>
+
+                <div class="flex justify-between items-end mb-4 flex-shrink-0 reveal delay-100">
+                    <div>
+                        <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-2">Observed Field Improvements</h3>
+                        <p class="text-base text-gray-600">Select a crop to view P-Vita's agronomic benefits versus traditional chemicals.</p>
+                    </div>
+                    
+                    <div class="relative min-w-[200px] hover:shadow-md transition-shadow rounded-xl">
+                        <select id="cropSelect" class="block w-full bg-gray-50 border border-gray-300 text-brand-dark py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-green font-bold cursor-pointer appearance-none shadow-sm transition-all duration-300 hover:bg-white">
+                            <option value="chili">🌶️ Chili Peppers</option>
+                            <option value="sorghum">🌾 Sorghum</option>
+                            <option value="corn">🌽 Corn (Maize)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-brand-dark">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 min-h-0 pb-8 reveal delay-200">
+                    <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 lg:col-span-3 flex flex-col hover:shadow-md transition-shadow duration-300">
+                        <div class="chart-container flex-1">
+                            <canvas id="yieldChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div id="cropInsights" class="bg-gradient-to-br from-brand-pink to-brand-dark text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-default">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-300">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 6</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Extended Trials -->
+        <div class="slide" id="slide-7">
+            <div class="slide-content">
+                <div class="slide-header reveal">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-brand-dark tracking-tight">P-VITA Impact</span>
+                    </div>
+                    <span class="text-sm font-bold text-brand-teal uppercase tracking-widest">06. Extended Trials</span>
+                </div>
+
+                <div class="mb-4 reveal delay-100">
+                    <h3 class="text-3xl lg:text-4xl font-bold text-brand-dark mb-2">Extended Crop Trials & Baselines</h3>
+                    <p class="text-base text-gray-600 max-w-4xl">Beyond our primary data sets, we continually monitor baseline metrics and qualitative improvements across a wider variety of crops to guide future P-Vita applications.</p>
+                </div>
+
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0 pb-8 mt-4">
+                    <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 flex flex-col justify-center reveal delay-200">
+                        <h4 class="font-black text-2xl text-brand-dark mb-4 border-b-2 border-brand-green pb-2 inline-block">Potato Baseline Metrics</h4>
+                        <p class="text-gray-600 mb-6">Initial baseline data collected prior to P-Vita application to establish a control for future yield comparisons.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-brand-green transition-all duration-300 cursor-default">
+                                <div class="w-12 h-12 rounded-full bg-brand-light flex items-center justify-center text-2xl mr-4">🥔</div>
+                                <div>
+                                    <h5 class="font-bold text-brand-dark text-lg">2.47 Tons</h5>
+                                    <p class="text-sm text-gray-500">Baseline Yield</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-brand-green transition-all duration-300 cursor-default">
+                                <div class="w-12 h-12 rounded-full bg-brand-light flex items-center justify-center text-2xl mr-4">⚖️</div>
+                                <div>
+                                    <h5 class="font-bold text-brand-dark text-lg">37g</h5>
+                                    <p class="text-sm text-gray-500">Average Tuber Weight</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-brand p-8 rounded-2xl flex flex-col justify-center text-white shadow-lg reveal delay-300">
+                        <h4 class="font-black text-2xl mb-4 border-b-2 border-white/20 pb-2 inline-block">Qualitative Observations</h4>
+                        <p class="text-white/90 mb-6">Field reports highlight significant visible improvements in plant health and resilience following P-Vita application.</p>
+                        <ul class="space-y-5">
+                            <li class="flex items-start group cursor-default">
+                                <span class="text-2xl mr-4 group-hover:scale-125 transition-transform duration-300">🍅</span>
+                                <div>
+                                    <h5 class="font-bold text-lg group-hover:text-brand-light transition-colors">Tomato</h5>
+                                    <p class="text-sm text-white/80">Notably lower disease severity and improved resilience.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start group cursor-default">
+                                <span class="text-2xl mr-4 group-hover:scale-125 transition-transform duration-300">🍆</span>
+                                <div>
+                                    <h5 class="font-bold text-lg group-hover:text-brand-light transition-colors">Eggplant</h5>
+                                    <p class="text-sm text-white/80">Markedly improved plant vigor and structural health.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start group cursor-default">
+                                <span class="text-2xl mr-4 group-hover:scale-125 transition-transform duration-300">🌿</span>
+                                <div>
+                                    <h5 class="font-bold text-lg group-hover:text-brand-light transition-colors">Okra</h5>
+                                    <p class="text-sm text-white/80">Enhanced vegetative growth and canopy development.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="slide-footer reveal delay-400">
+                    <span>Sprint 2 Pre-Design Report</span>
+                    <span>Page 7</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts for Chart.js implementation, Navigation, & Interactions -->
+    <script>
+        // --- INTERSECTION OBSERVER FOR ENTRANCE ANIMATIONS ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                } else {
+                    // Reset animation when user scrolls away (optional, creates dynamic feel when scrolling back)
+                    entry.target.classList.remove('active'); 
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+
+        // --- SCROLL SPY FOR NAVIGATION DOTS ---
+        const scroller = document.getElementById('scroller');
+        const dots = document.querySelectorAll('.dot');
+        
+        scroller.addEventListener('scroll', () => {
+            let index = Math.round(scroller.scrollTop / window.innerHeight);
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        });
+
+        // --- BRAND COLORS MAPPING ---
+        const colors = {
+            green: '#42ba63',
+            blue: '#37449d',
+            pink: '#d81e5b',
+            teal: '#52959b',
+            light: '#F6F6F6',
+            dark: '#000000',
+            gray: '#e5e7eb'
+        };
+
+        Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+        Chart.defaults.color = colors.dark;
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 1000, easing: 'easeOutQuart' } // Smooth chart loading
+        };
+
+        // --- 1. GENDER CHART & INTERACTIVE REGION TABS ---
+        const genderCtx = document.getElementById('genderChart').getContext('2d');
+        let genderChart = new Chart(genderCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Men', 'Women'],
+                datasets: [{
+                    data: [98, 2],
+                    backgroundColor: [colors.blue, colors.green],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                ...commonOptions,
+                cutout: '75%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 12, weight: 'bold' } } }
+                }
+            }
+        });
+
+        // Tab Logic
+        const tabLower = document.getElementById('tab-lower');
+        const tabUpper = document.getElementById('tab-upper');
+        const regionTitle = document.getElementById('region-title');
+        const regionDesc = document.getElementById('region-desc');
+        const regionStrategy = document.getElementById('region-strategy');
+        const chartTitle = document.getElementById('chart-title');
+        const regionCard = document.getElementById('region-card');
+
+        tabLower.addEventListener('click', () => {
+            tabLower.className = "px-4 py-2 bg-white shadow-sm text-brand-dark rounded-lg font-bold transition-all duration-300";
+            tabUpper.className = "px-4 py-2 text-gray-500 hover:text-brand-dark rounded-lg font-bold transition-all duration-300";
+            
+            regionCard.className = "bg-brand-light p-4 rounded-xl border-l-4 border-brand-green transition-all duration-500";
+            regionTitle.textContent = "Sharkia Governorate";
+            regionDesc.textContent = "(Shabramant, Kafr Abrash, Ghaffaryah, etc.)";
+            chartTitle.textContent = "Gender Composition (Lower Egypt)";
+            regionStrategy.innerHTML = "<strong>Strategy:</strong> Lower Egypt sees ~2% female participation. We are actively creating pathways for women's entry under fair, paid conditions.";
+            
+            genderChart.data.datasets[0].data = [98, 2];
+            genderChart.update();
+        });
+
+        tabUpper.addEventListener('click', () => {
+            tabUpper.className = "px-4 py-2 bg-white shadow-sm text-brand-dark rounded-lg font-bold transition-all duration-300";
+            tabLower.className = "px-4 py-2 text-gray-500 hover:text-brand-dark rounded-lg font-bold transition-all duration-300";
+            
+            regionCard.className = "bg-brand-light p-4 rounded-xl border-l-4 border-brand-blue transition-all duration-500";
+            regionTitle.textContent = "Luxor / Esna";
+            regionDesc.textContent = "(Al-Adaysat Bahari, El-Hela, El-Helela, Odaisat Qebli, Baeirat, Armant, El Keman, Tod)";
+            chartTitle.textContent = "Gender Composition (Upper Egypt)";
+            regionStrategy.innerHTML = "<strong>Strategy:</strong> In Upper Egypt, participation is 100% men due to cultural realities. P-Vita is engaging CDAs to involve women safely and fairly.";
+            
+            genderChart.data.datasets[0].data = [100, 0];
+            genderChart.update();
+        });
+
+
+        // --- 2. COST CHART ---
+        new Chart(document.getElementById('costChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Chemical Fertilizers', 'P-Vita Algae'],
+                datasets: [{
+                    label: 'Cost per Season (EGP)',
+                    data: [7000, 3000],
+                    backgroundColor: [colors.gray, colors.green],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: false }, tooltip: { padding: 10 } },
+                scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+            }
+        });
+
+        // --- 3. INCOME CHART ---
+        new Chart(document.getElementById('incomeChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Before (Chemical)', 'After (P-Vita)'],
+                datasets: [{
+                    label: 'Net Annual Income (EGP)',
+                    data: [60060, 75075],
+                    backgroundColor: [colors.gray, colors.blue],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: false }, tooltip: { padding: 10 } },
+                scales: { y: { beginAtZero: true, min: 40000, grid: { display: false } }, x: { grid: { display: false } } }
+            }
+        });
+
+        // --- 4. AWARENESS CHART ---
+        new Chart(document.getElementById('awarenessChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Heard of Algae', 'Not Heard'],
+                datasets: [{
+                    data: [10, 90],
+                    backgroundColor: [colors.green, colors.gray],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } }
+            }
+        });
+
+        // --- 5. ADOPTION CHART ---
+        new Chart(document.getElementById('adoptionChart'), {
+            type: 'bar',
+            data: {
+                labels: ['NPK Usage', 'Manure Usage', 'Willing to adopt P-Vita'],
+                datasets: [
+                    {
+                        label: 'Current Usage (%)',
+                        data: [100, 60, 1], // 1% is current algae use
+                        backgroundColor: colors.gray,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Future Intent (%)',
+                        data: [0, 0, 77], // 77% SHF willing
+                        backgroundColor: colors.blue,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                indexAxis: 'y',
+                plugins: { legend: { position: 'top', labels: { boxWidth: 12 } }, tooltip: { padding: 10 } },
+                scales: { x: { max: 100, grid: { display: false } }, y: { grid: { display: false } } }
+            }
+        });
+
+        // --- 6. SOIL HEALTH CHART ---
+        new Chart(document.getElementById('soilChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Nitrogen (N)', 'Phosphorus (P)', 'Potassium (K)', 'Salinity / EC'],
+                datasets: [
+                    {
+                        label: 'Control (Chemical)',
+                        data: [98, 135, 268, 675],
+                        backgroundColor: '#d1d5db', 
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Vita-Power',
+                        data: [132, 177, 355, 141],
+                        backgroundColor: colors.green,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                indexAxis: 'y',
+                plugins: { 
+                    legend: { position: 'top', labels: { font: { size: 12, weight: 'bold' } } },
+                    tooltip: {
+                        padding: 10,
+                        callbacks: {
+                            afterLabel: function(context) {
+                                if(context.datasetIndex === 1) {
+                                    const diff = context.raw - context.chart.data.datasets[0].data[context.dataIndex];
+                                    return diff > 0 ? `Improvement: +${diff}` : `Reduction: ${diff}`;
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: { x: { grid: { color: colors.gray } }, y: { grid: { display: false } } }
+            }
+        });
+
+        // --- 7. INTERACTIVE CROP YIELD CHART & SELECTOR ---
+        const cropData = {
+            chili: {
+                labels: ['No. of Flowers', 'Maturity Cycle (Days) *Lower=Faster', 'Chlorophyll Index'],
+                control: [12, 35, 1.36],
+                pvita: [35, 30, 1.86],
+                html: `
+                    <h3 class="text-2xl font-black mb-4">🌶️ Chili Peppers</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+23</span>
+                            <span class="text-sm"><strong>More Flowers:</strong> Massive boost directly multiplying local food supply.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">-5</span>
+                            <span class="text-sm"><strong>Days Faster:</strong> Cuts maturity cycle, getting food to market quicker.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+36%</span>
+                            <span class="text-sm"><strong>Chlorophyll:</strong> Noticeably greener plants capturing more solar energy.</span>
+                        </li>
+                    </ul>
+                `
+            },
+            sorghum: {
+                labels: ['Stem Height (cm)', 'Number of Leaves', 'Leaf Length (cm)', 'Leaf Width (cm)'],
+                control: [140, 11, 80, 5.6],
+                pvita: [260, 12, 82, 7.5],
+                html: `
+                    <h3 class="text-2xl font-black mb-4">🌾 Sorghum</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+120</span>
+                            <span class="text-sm"><strong>cm Stem Height:</strong> Explosive surge creating stronger, wind-resilient stalks.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+1</span>
+                            <span class="text-sm"><strong>Extra Leaf:</strong> Expands natural solar panels per plant.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+1.9</span>
+                            <span class="text-sm"><strong>cm Leaf Width:</strong> Broader surface area for maximized energy absorption.</span>
+                        </li>
+                    </ul>
+                `
+            },
+            corn: {
+                labels: ['Stem Height (cm)', 'Stem Dia (cm) x10', 'Leaf Length (cm)', 'Leaf Width (cm)'],
+                control: [140, 10, 86, 4.2],
+                pvita: [165, 17, 87, 7.0],
+                html: `
+                    <h3 class="text-2xl font-black mb-4">🌽 Corn (Maize)</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+25</span>
+                            <span class="text-sm"><strong>cm Stem Height:</strong> Moderate but vital vegetative development.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+2.8</span>
+                            <span class="text-sm"><strong>cm Leaf Width:</strong> Significant canopy expansion for better growth.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-xl mr-3 font-bold text-brand-light">+70%</span>
+                            <span class="text-sm"><strong>Stem Girth:</strong> Thicker stems to support heavier crop yields.</span>
+                        </li>
+                    </ul>
+                `
+            }
+        };
+
+        const ctxYield = document.getElementById('yieldChart').getContext('2d');
+        let yieldChart = new Chart(ctxYield, {
+            type: 'bar',
+            data: {
+                labels: cropData.chili.labels,
+                datasets: [
+                    { label: 'Control', data: cropData.chili.control, backgroundColor: colors.gray, borderRadius: 4 },
+                    { label: 'Vita-Power', data: cropData.chili.pvita, backgroundColor: colors.blue, borderRadius: 4 }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { position: 'top' }, tooltip: { padding: 10 } },
+                scales: { y: { beginAtZero: true, grid: { color: colors.gray } }, x: { grid: { display: false } } },
+            }
+        });
+
+        const cropSelect = document.getElementById('cropSelect');
+        const cropInsights = document.getElementById('cropInsights');
+
+        // Initialize first view
+        cropInsights.innerHTML = cropData.chili.html;
+
+        cropSelect.addEventListener('change', (e) => {
+            const selected = e.target.value;
+            const data = cropData[selected];
+            
+            // Update Chart
+            yieldChart.data.labels = data.labels;
+            yieldChart.data.datasets[0].data = data.control;
+            yieldChart.data.datasets[1].data = data.pvita;
+            
+            // Swap colors slightly for visual feedback
+            yieldChart.data.datasets[1].backgroundColor = selected === 'chili' ? colors.pink : (selected === 'sorghum' ? colors.blue : colors.teal);
+            
+            yieldChart.update();
+
+            // Update Insights HTML with a smooth fade
+            cropInsights.style.opacity = 0;
+            cropInsights.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                cropInsights.innerHTML = data.html;
+                // Adjust gradient based on selection
+                if(selected === 'chili') cropInsights.className = "bg-gradient-to-br from-brand-pink to-brand-dark text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-default";
+                if(selected === 'sorghum') cropInsights.className = "bg-gradient-to-br from-brand-blue to-brand-green text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-default";
+                if(selected === 'corn') cropInsights.className = "bg-gradient-to-br from-brand-teal to-brand-dark text-white p-6 rounded-2xl shadow-lg flex flex-col justify-center lg:col-span-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-default";
+                
+                cropInsights.style.opacity = 1;
+                cropInsights.style.transform = 'translateY(0)';
+            }, 300);
+        });
+
+    </script>
+</body>
+</html>
